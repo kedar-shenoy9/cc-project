@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.DatacenterBroker;
+import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 
 public class MinminBroker extends DatacenterBroker{
@@ -13,12 +14,17 @@ public class MinminBroker extends DatacenterBroker{
 	}
 
 	//scheduling function
-	
+//	private ArrayList<Double> minCompletion = new ArrayList<Double>();
+	private double[] readyTime;
 	
 	public void scheduleTaskstoVms(){
 		int reqTasks= cloudletList.size();
 		int reqVms= vmList.size();
 		//int k=0;
+		readyTime = new double[reqVms];
+		//initialize the ready time
+		for(int i=0; i<reqVms; i++)
+			readyTime[i] = 0.0;
 		
 		ArrayList<Cloudlet> clist = new ArrayList<Cloudlet>();
 		ArrayList<Vm> vlist = new ArrayList<Vm>();
@@ -35,6 +41,8 @@ public class MinminBroker extends DatacenterBroker{
     		//k++;
 		}
 
+		int noCloudlets = clist.size();
+		int noVms = vlist.size();
 		
 		double completionTime[][] = new double[reqTasks][reqVms];
 		double execTime[][] = new double[reqTasks][reqVms];
@@ -56,37 +64,68 @@ public class MinminBroker extends DatacenterBroker{
 		
 		int minCloudlet=0;
 		int minVm=0;
-		double min=-1.0d;
+//		double min=-1.0d;
+		double minCompletion;
+		double oldReadyTimeOfMinVm;
+		double readyTimeDifference;
 		
-		for(int c=0; c< clist.size(); c++){
-			
-			for(int i=0;i<clist.size();i++){
-				for(int j=0;j<(vlist.size()-1);j++){
-					if(completionTime[i][j+1] > completionTime[i][j] && completionTime[i][j+1] > 0.0){
+		for(int c=0; c<noCloudlets; c++){
+			minCompletion = Integer.MAX_VALUE;
+			for(int i=0;i<noCloudlets;i++){
+				for(int j=0;j<noVms;j++){
+					if(minCompletion > completionTime[i][j] && completionTime[i][j] != -1.0){
 						minCloudlet=i;
+						minVm = j;
+						minCompletion = completionTime[i][j];
 					}
 				}
 			}
 			
+//			min = Double.MAX_VALUE;
+//			minVm = noVms+1;
+//			for(int j=0; j<vlist.size(); j++){
+//				time = getExecTime(clist.get(minCloudlet), vlist.get(j));
+//				Log.printLine("Time:"+time+" Min value:"+min+" MinVm: "+minVm);
+//				if(time < min){
+//					minVm=j;
+//					min=time;
+//				}
+//				
+//			}
+			//bind the cloudlet to the vm
+			bindCloudletToVm(minCloudlet, minVm);
+			Cloudlet MinCloudlet = clist.get(minCloudlet);
+//			clist.remove(minCloudlet);
 			
-			for(int j=0; j<vlist.size(); j++){
-				time = getExecTime(clist.get(minCloudlet), vlist.get(j));
-				if(j==0){
-					min=time;
+			//update the ready time
+			oldReadyTimeOfMinVm = readyTime[minVm];
+			readyTime[minVm] = oldReadyTimeOfMinVm + getExecTime(MinCloudlet, vlist.get(minVm));
+			readyTimeDifference = readyTime[minVm]-oldReadyTimeOfMinVm;
+			
+			//update the 2d array
+			for(int i=0; i<clist.size(); i++) {
+				if(completionTime[i][minVm] != -1.0) {
+					completionTime[i][minVm] += readyTimeDifference;
 				}
-				if(time < min && time > -1.0){
-					minVm=j;
-					min=time;
-				}
-				
 			}
 			
-			bindCloudletToVm(minCloudlet, minVm);
-			clist.remove(minCloudlet);
+			Log.print("Printing the ready time array "+minVm+" "+minCloudlet+" ");
+			for(int i=0; i<reqVms; i++) {
+				Log.print(readyTime[i]+" ");
+			}
+			Log.print("\n");
 			
 			for(int i=0; i<vlist.size(); i++){
 				completionTime[minCloudlet][i]=-1.0;
 			}
+			
+//			Log.printLine("Printing the completion time array");
+//			for(int i=0; i<noCloudlets; i++) {
+//				for(int j=0; j<noVms; j++) {
+//					Log.print(completionTime[i][j]+" ");
+//				}
+//				Log.print("\n");
+//			}
 			
 		}
 		

@@ -26,7 +26,7 @@ public class Compare {
 	/** The vmlist. */
 	private static List<Vm> vmlist;
 
-	private static int reqTasks = 20;
+	private static int reqTasks = 10;
 	private static int reqVms = 4;
 	private static double[][] completionTime = new double[reqTasks][3];
 	private static double[][] waitingTime = new double[reqTasks][3];
@@ -41,10 +41,10 @@ public class Compare {
 
         try {
         		//generate the cloudlet lengths dynamically
-        		for(int i=0; i<reqTasks/2; i++)
+        		for(int i=0; i<reqTasks; i++)
         			lengths[i] = ThreadLocalRandom.current().nextLong(100000, 100000*reqTasks);
-        		for(int i=reqTasks/2; i<reqTasks; i++)
-        			lengths[i] = ThreadLocalRandom.current().nextLong(1000, 1000*reqTasks);
+//        		for(int i=reqTasks-1; i<reqTasks; i++)
+//        			lengths[i] = ThreadLocalRandom.current().nextLong(1000, 1000*reqTasks);
         		
             	//implement minmin
             	minMin();
