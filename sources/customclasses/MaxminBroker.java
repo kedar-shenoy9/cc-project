@@ -90,7 +90,8 @@ public class MaxminBroker extends DatacenterBroker {
 				
 			}
 			
-			bindCloudletToVm(maxCloudlet, minVm);
+//			bindCloudletToVm(maxCloudlet, minVm);
+			clist.get(maxCloudlet).setVmId(vlist.get(minVm).getId());
 			Cloudlet MaxCloudlet = clist.get(maxCloudlet);
 //			clist.remove(maxCloudlet);
 			
@@ -106,7 +107,7 @@ public class MaxminBroker extends DatacenterBroker {
 				}
 			}
 			
-			Log.print("Printing the ready time array ");
+			Log.print("Printing the ready time array "+minVm+" "+maxCloudlet+" ");
 			for(int i=0; i<reqVms; i++) {
 				Log.print(readyTime[i]+" ");
 			}

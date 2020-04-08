@@ -11,6 +11,8 @@ import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.jfree.ui.RefineryUtilities;
+
 import customclasses.CloudletCreator3;
 import customclasses.DataCenterCreator;
 import customclasses.MinminBroker;
@@ -18,6 +20,7 @@ import customclasses.VmsCreator;
 import customclasses.MaxminBroker;
 import customclasses.FcfsBroker;
 import customclasses.Setw;
+import customclasses.BarChart;
 
 public class Compare {
 	/** The cloudlet list. */
@@ -26,11 +29,11 @@ public class Compare {
 	/** The vmlist. */
 	private static List<Vm> vmlist;
 
-	private static int reqTasks = 10;
-	private static int reqVms = 4;
+	private static int reqTasks = 100;
+	private static int reqVms = 20;
 	private static double[][] completionTime = new double[reqTasks][3];
 	private static double[][] waitingTime = new double[reqTasks][3];
-	private static int[][] noOfVmsUsed = new int[reqTasks][3];
+//	private static int[][] noOfVmsUsed = new int[reqTasks][3];
 	private static long lengths[] = new long[reqTasks];
 	/**
 	 * Creates main() to run this example
@@ -42,7 +45,7 @@ public class Compare {
         try {
         		//generate the cloudlet lengths dynamically
         		for(int i=0; i<reqTasks; i++)
-        			lengths[i] = ThreadLocalRandom.current().nextLong(100000, 100000*reqTasks);
+        			lengths[i] = ThreadLocalRandom.current().nextLong(100000, 900000);
 //        		for(int i=reqTasks-1; i<reqTasks; i++)
 //        			lengths[i] = ThreadLocalRandom.current().nextLong(1000, 1000*reqTasks);
         		
@@ -121,7 +124,7 @@ public class Compare {
     	//insert into the completionTime array
     	for(Cloudlet c:newList) {
     		completionTime[c.getCloudletId()][0] = c.getActualCPUTime();
-    		noOfVmsUsed[c.getCloudletId()][0] = c.getAllResourceId().length;
+//    		noOfVmsUsed[c.getCloudletId()][0] = c.getAllResourceId().length;
     	}
 
     	Log.printLine("Min-Min finished!");
@@ -185,7 +188,7 @@ public class Compare {
     	//insert into the completionTime array
     	for(Cloudlet c:newList) {
     		completionTime[c.getCloudletId()][1] = c.getActualCPUTime();
-    		noOfVmsUsed[c.getCloudletId()][1] = c.getAllResourceId().length;
+//    		noOfVmsUsed[c.getCloudletId()][1] = c.getAllResourceId().length;
     	}
 
     	Log.printLine("MaxMin finished!");
@@ -249,7 +252,7 @@ public class Compare {
     	//insert into the completionTime array
     	for(Cloudlet c:newList) {
     		completionTime[c.getCloudletId()][2] = c.getActualCPUTime();
-    		noOfVmsUsed[c.getCloudletId()][2] = c.getAllResourceId().length;
+//    		noOfVmsUsed[c.getCloudletId()][2] = c.getAllResourceId().length;
     	}
 
     	Log.printLine("FCFS finished!");
@@ -262,13 +265,13 @@ public class Compare {
 		DecimalFormat dft = new DecimalFormat("###.##");
 		
 		//displaying the time taken
-		Log.printLine("Cloudlet Id"+indent+"Cloudlet Length"+indent+indent+"Min-Min"+indent+indent+indent+indent+"Max-Min"+indent+indent+indent+"FCFS");
-		Log.printLine("                                "+"Time Taken"+"   "+"Vms Used"+"   "+"Time Taken"+"   "+"Vms Used"+"   "+"Time Taken"+"   "+"Vms Used"); 
+		Log.printLine("Cloudlet Id"+indent+"Cloudlet Length"+indent+"Min-Min"+indent+"  Max-Min"+indent+" FCFS");
+		Log.printLine("                                "+"Time Taken"+"   "+"Time Taken"+"   "+"Time Taken"+"   "); 
 		Log.printLine("---------------------------------------------------------------------------------------------------");
 		for(int i=0; i<reqTasks; i++) {
 			Log.print(Setw.setw(Integer.toString(i), 11+indent.length()) + Setw.setw(Long.toString(lengths[i]), 15+indent.length()) );
 			for(int j=0; j<3; j++) {
-				output = Setw.setw(dft.format(completionTime[i][j]), 13) + Setw.setw(Integer.toString(noOfVmsUsed[i][j]), 11);
+				output = Setw.setw(dft.format(completionTime[i][j]), 13); //+ Setw.setw(Integer.toString(noOfVmsUsed[i][j]), 11);
 				Log.print(output);
 			}
 			Log.print("\n");
@@ -294,6 +297,12 @@ public class Compare {
 		Log.printLine(Setw.setw("Min-Min: ", 9)+dft.format(averageCpuTime[0]));
 		Log.printLine(Setw.setw("Max-Min: ", 9)+dft.format(averageCpuTime[1]));
 		Log.printLine(Setw.setw("FCFS: ", 9)+dft.format(averageCpuTime[2]));
+		
+		double[] values = {averageCpuTime[0], averageCpuTime[1], averageCpuTime[2]};
+		BarChart chart = new BarChart("ALgo", "blah", values);
+		chart.pack( );        
+	    RefineryUtilities.centerFrameOnScreen( chart );        
+	    chart.setVisible( true ); 
 		
 //		//waiting time
 //		Log.printLine("Average waiting time: ");

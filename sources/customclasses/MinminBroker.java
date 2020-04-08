@@ -93,7 +93,8 @@ public class MinminBroker extends DatacenterBroker{
 //				
 //			}
 			//bind the cloudlet to the vm
-			bindCloudletToVm(minCloudlet, minVm);
+//			bindCloudletToVm(minCloudlet, minVm);
+			clist.get(minCloudlet).setVmId(vlist.get(minVm).getId());
 			Cloudlet MinCloudlet = clist.get(minCloudlet);
 //			clist.remove(minCloudlet);
 			
