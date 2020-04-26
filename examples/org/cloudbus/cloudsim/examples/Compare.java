@@ -290,7 +290,7 @@ public class Compare {
 				sum1 += completionTime[j][i];
 				sum2 += waitingTime[j][i];
 			}
-			averageCpuTime[i] = sum1/reqTasks;
+			averageCpuTime[i] = sum1;
 			averageWaitingTime[i] = sum2/reqTasks;
 		}
 		//cpu time
@@ -301,7 +301,7 @@ public class Compare {
 		Log.printLine(Setw.setw("FCFS: ", 9)+dft.format(averageCpuTime[2]));
 		
 		double[] values = {averageCpuTime[0], averageCpuTime[1], averageCpuTime[2]};
-		Charts chart = new Charts("Algorithm Comparison", values, completionTime, minminThroughput, maxminThroughput);
+		Charts chart = new Charts("Algorithm Comparison", values, completionTime, minminThroughput, maxminThroughput, lengths);
 //		chart.pack( );        
 //	    RefineryUtilities.centerFrameOnScreen( chart );        
 //	    chart.setVisible( true ); 
