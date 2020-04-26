@@ -20,7 +20,7 @@ import customclasses.VmsCreator;
 import customclasses.MaxminBroker;
 import customclasses.FcfsBroker;
 import customclasses.Setw;
-import customclasses.BarChart;
+import customclasses.Charts;
 
 public class Compare {
 	/** The cloudlet list. */
@@ -299,7 +299,7 @@ public class Compare {
 		Log.printLine(Setw.setw("FCFS: ", 9)+dft.format(averageCpuTime[2]));
 		
 		double[] values = {averageCpuTime[0], averageCpuTime[1], averageCpuTime[2]};
-		BarChart chart = new BarChart("ALgo", "blah", values);
+		Charts chart = new Charts("Algorithm Comparison", "Average completion time", values);
 		chart.pack( );        
 	    RefineryUtilities.centerFrameOnScreen( chart );        
 	    chart.setVisible( true ); 
