@@ -299,10 +299,10 @@ public class Compare {
 		Log.printLine(Setw.setw("FCFS: ", 9)+dft.format(averageCpuTime[2]));
 		
 		double[] values = {averageCpuTime[0], averageCpuTime[1], averageCpuTime[2]};
-		Charts chart = new Charts("Algorithm Comparison", "Average completion time", values);
-		chart.pack( );        
-	    RefineryUtilities.centerFrameOnScreen( chart );        
-	    chart.setVisible( true ); 
+		Charts chart = new Charts("Algorithm Comparison", values, completionTime);
+//		chart.pack( );        
+//	    RefineryUtilities.centerFrameOnScreen( chart );        
+//	    chart.setVisible( true ); 
 		
 //		//waiting time
 //		Log.printLine("Average waiting time: ");
