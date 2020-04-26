@@ -17,7 +17,7 @@ public class MinminBroker extends DatacenterBroker{
 //	private ArrayList<Double> minCompletion = new ArrayList<Double>();
 	private double[] readyTime;
 	
-	public void scheduleTaskstoVms(){
+	public double scheduleTaskstoVms(){
 		int reqTasks= cloudletList.size();
 		int reqVms= vmList.size();
 		//int k=0;
@@ -130,8 +130,18 @@ public class MinminBroker extends DatacenterBroker{
 			
 		}
 		
-		
+		return getThroughput();
 	}	
+	
+	private double getThroughput() {
+		double maxReadyTime = readyTime[0];
+		for(int i=1; i<readyTime.length; i++) {
+			if(maxReadyTime > readyTime[i])
+				maxReadyTime = readyTime[i];
+		}
+		double throughput = cloudletList.size() / (maxReadyTime + 0.1);
+		return throughput;
+	}
 	
 	
 	private double getCompletionTime(Cloudlet cloudlet, Vm vm){

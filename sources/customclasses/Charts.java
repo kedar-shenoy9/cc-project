@@ -1,11 +1,12 @@
 package customclasses;
 
-import java.awt.Color; 
+import java.awt.Color;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import javax.swing.*;
 
-import org.jfree.ui.ApplicationFrame;
+import org.cloudbus.cloudsim.Log;
+//import org.jfree.ui.ApplicationFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel; 
 import org.jfree.chart.JFreeChart; 
@@ -23,8 +24,10 @@ public class Charts{
 	
 	private double[] values = new double[3];
 	private double[][] completionTime = new double[100][3];
+	private double minminThroughput;
+	private double maxminThroughput;
 
-	public Charts( String applicationTitle , double[] values, double[][] completionTime) {
+	public Charts( String applicationTitle , double[] values, double[][] completionTime, double minminThroughput, double maxminThroughput) {
 //      super( applicationTitle );
       for(int i=0; i<values.length; i++) {
     	  this.values[i]  = values[i];
@@ -34,6 +37,12 @@ public class Charts{
     		  this.completionTime[i][j] = completionTime[i][j];
     	  }
       }
+      this.minminThroughput = minminThroughput;
+      this.maxminThroughput = maxminThroughput;
+      Log.printLine(minminThroughput);
+      Log.printLine(maxminThroughput);
+      
+      //barchart 1 comparing the average completion time
       JFreeChart barChart = ChartFactory.createBarChart(
          "Average Completion Time",           
          "Algorithm",            
@@ -42,6 +51,12 @@ public class Charts{
          PlotOrientation.VERTICAL,           
          true, true, false);
       
+    //not test
+      ChartPanel chartPanel1 = new ChartPanel( barChart );        
+//      chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );        
+//      setContentPane( chartPanel ); 
+      
+      //line chart for the completion time all the cloudlets
       //test
       JFreeChart xylineChart = ChartFactory.createXYLineChart(
     	         "Completion Times" ,
@@ -51,11 +66,6 @@ public class Charts{
     	         PlotOrientation.VERTICAL ,
     	         true , true , false);
          
-      //not test
-      ChartPanel chartPanel1 = new ChartPanel( barChart );        
-//      chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );        
-//      setContentPane( chartPanel ); 
-      
       //test
       final XYPlot plot = xylineChart.getXYPlot( );
       
@@ -70,12 +80,29 @@ public class Charts{
       
       ChartPanel chartPanel2 = new ChartPanel( xylineChart );
       
+      //barchart 2 for throughput
+      JFreeChart barChart1 = ChartFactory.createBarChart(
+         "Average Throughput",           
+         "Algorithm",            
+         "Throughput",            
+         createDataset3(),          
+         PlotOrientation.VERTICAL,           
+         true, true, false);
+      
+      ChartPanel chartPanel3 = new ChartPanel( barChart1 ); 
+      
+      //final chart
       //test
-      JFrame frame = new JFrame("Chart");
-      frame.getContentPane().add(chartPanel1, BorderLayout.WEST);
-      frame.getContentPane().add(chartPanel2, BorderLayout.EAST);
-      frame.pack();
-      frame.setVisible(true);
+      JFrame frame1 = new JFrame("Chart");
+      frame1.getContentPane().add(chartPanel1, BorderLayout.WEST);
+      frame1.getContentPane().add(chartPanel2, BorderLayout.EAST);
+      frame1.pack();
+      frame1.setVisible(true);
+      
+      JFrame frame2 = new JFrame("Chart");
+      frame2.getContentPane().add(chartPanel3);
+      frame2.pack();
+      frame2.setVisible(true);
    }
    
    private CategoryDataset createDataset1( ) {
@@ -94,46 +121,37 @@ public class Charts{
    
    //test
    private XYDataset createDataset2( ) {
-	      final XYSeries minmin = new XYSeries( "Min-Min" );          
-	      for(int i=0; i<completionTime.length; i++) {
-	    	  minmin.add(i, completionTime[i][0]);
-	      }
-	      
-	      final XYSeries maxmin = new XYSeries( "Max-Min" );          
-	      for(int i=0; i<completionTime.length; i++) {
-	    	  maxmin.add(i, completionTime[i][1]);
-	      }    
-	      
-	      final XYSeries fcfs = new XYSeries( "FCFS" );          
-	      for(int i=0; i<completionTime.length; i++) {
-	    	  fcfs.add(i, completionTime[i][2]);
-	      }          
-	      
-	      final XYSeriesCollection dataset = new XYSeriesCollection( );          
-	      dataset.addSeries( minmin );          
-	      dataset.addSeries( maxmin );          
-	      dataset.addSeries( fcfs );
-	      return dataset;
-	   
-//	   	final XYSeries firefox = new XYSeries( "Firefox" );          
-//	      firefox.add( 1.0 , 1.0 );          
-//	      firefox.add( 2.0 , 4.0 );          
-//	      firefox.add( 3.0 , 3.0 );          
-//	      
-//	      final XYSeries chrome = new XYSeries( "Chrome" );          
-//	      chrome.add( 1.0 , 4.0 );          
-//	      chrome.add( 2.0 , 5.0 );          
-//	      chrome.add( 3.0 , 6.0 );          
-//	      
-//	      final XYSeries iexplorer = new XYSeries( "InternetExplorer" );          
-//	      iexplorer.add( 3.0 , 4.0 );          
-//	      iexplorer.add( 4.0 , 5.0 );          
-//	      iexplorer.add( 5.0 , 4.0 );          
-//	      
-//	      final XYSeriesCollection dataset = new XYSeriesCollection( );          
-//	      dataset.addSeries( firefox );          
-//	      dataset.addSeries( chrome );          
-//	      dataset.addSeries( iexplorer );
-//	      return dataset;
+      final XYSeries minmin = new XYSeries( "Min-Min" );          
+      for(int i=0; i<completionTime.length; i++) {
+    	  minmin.add(i, completionTime[i][0]);
+      }
+      
+      final XYSeries maxmin = new XYSeries( "Max-Min" );          
+      for(int i=0; i<completionTime.length; i++) {
+    	  maxmin.add(i, completionTime[i][1]);
+      }    
+      
+      final XYSeries fcfs = new XYSeries( "FCFS" );          
+      for(int i=0; i<completionTime.length; i++) {
+    	  fcfs.add(i, completionTime[i][2]);
+      }          
+      
+      final XYSeriesCollection dataset = new XYSeriesCollection( );          
+      dataset.addSeries( minmin );          
+      dataset.addSeries( maxmin );          
+      dataset.addSeries( fcfs );
+      return dataset;
+   }
+   
+   private CategoryDataset createDataset3( ) {
+	      final String minmin = "Min-Min";        
+	      final String maxmin = "Max-Min";     
+	      final String time = "Time";
+	      final DefaultCategoryDataset dataset = 
+	      new DefaultCategoryDataset( );
+	      dataset.addValue( minminThroughput , minmin , time );        
+	      dataset.addValue( maxminThroughput , maxmin , time);   
+
+	      return dataset; 
 	   }
 }

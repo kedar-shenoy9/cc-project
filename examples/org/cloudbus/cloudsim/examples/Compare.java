@@ -11,7 +11,7 @@ import org.cloudbus.cloudsim.Datacenter;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.jfree.ui.RefineryUtilities;
+//import org.jfree.ui.RefineryUtilities;
 
 import customclasses.CloudletCreator3;
 import customclasses.DataCenterCreator;
@@ -35,6 +35,8 @@ public class Compare {
 	private static double[][] waitingTime = new double[reqTasks][3];
 //	private static int[][] noOfVmsUsed = new int[reqTasks][3];
 	private static long lengths[] = new long[reqTasks];
+	private static double minminThroughput;
+	private static double maxminThroughput;
 	/**
 	 * Creates main() to run this example
 	 */
@@ -107,7 +109,7 @@ public class Compare {
     	
 
     	//call the scheduling function via the broker
-    	minminBroker.scheduleTaskstoVms();
+    	minminThroughput = minminBroker.scheduleTaskstoVms();
 
 	
     	// Sixth step: Starts the simulation
@@ -171,7 +173,7 @@ public class Compare {
     	
 
     	//call the scheduling function via the broker
-    	maxminBroker.scheduleTaskstoVms();
+    	maxminThroughput = maxminBroker.scheduleTaskstoVms();
 
 	
     	// Sixth step: Starts the simulation
@@ -299,7 +301,7 @@ public class Compare {
 		Log.printLine(Setw.setw("FCFS: ", 9)+dft.format(averageCpuTime[2]));
 		
 		double[] values = {averageCpuTime[0], averageCpuTime[1], averageCpuTime[2]};
-		Charts chart = new Charts("Algorithm Comparison", values, completionTime);
+		Charts chart = new Charts("Algorithm Comparison", values, completionTime, minminThroughput, maxminThroughput);
 //		chart.pack( );        
 //	    RefineryUtilities.centerFrameOnScreen( chart );        
 //	    chart.setVisible( true ); 
